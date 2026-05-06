@@ -49,6 +49,22 @@ services:
       timeout: 5s
       retries: 10
       start_period: 40s
+      
+  phpmyadmin:
+    image: phpmyadmin:5.2-apache
+    container_name: notifications-phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "${PHPMYADMIN_PORT:-8089}:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 0
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - notifications
 
   queue:
     build:
