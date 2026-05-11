@@ -156,7 +156,7 @@ FILESYSTEM_DISK=local
 Create the test database:
 
 ```bash
-docker compose exec mysql mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS notifications_test;"
+docker compose exec mysql mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS notifications_test; GRANT ALL PRIVILEGES ON notifications_test.* TO 'notifications'@'%';"
 ```
 
 The test suite uses `RefreshDatabase`, so migrations are applied to the test database during tests.
