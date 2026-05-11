@@ -3,6 +3,9 @@ services:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
+      args:
+        UID: ${DOCKER_UID:-1000}
+        GID: ${DOCKER_GID:-1000}
     container_name: notifications-app
     restart: unless-stopped
     working_dir: /var/www/html
@@ -19,7 +22,7 @@ services:
     container_name: notifications-nginx
     restart: unless-stopped
     ports:
-      - "${APP_PORT:-8088}:80"
+      - "${DOCKER_APP_PORT:-8088}:80"
     volumes:
       - .:/var/www/html
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
@@ -33,12 +36,12 @@ services:
     container_name: notifications-mysql
     restart: unless-stopped
     ports:
-      - "${FORWARD_DB_PORT:-33061}:3306"
+      - "${DOCKER_DB_PORT:-33061}:3306"
     environment:
       MYSQL_DATABASE: "${DB_DATABASE:-notifications}"
       MYSQL_USER: "${DB_USERNAME:-notifications}"
       MYSQL_PASSWORD: "${DB_PASSWORD:-password}"
-      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD:-root}"
+      MYSQL_ROOT_PASSWORD: "${DOCKER_DB_ROOT_PASSWORD:-root}"
     volumes:
       - notifications-mysql:/var/lib/mysql
     networks:
@@ -55,7 +58,7 @@ services:
     container_name: notifications-phpmyadmin
     restart: unless-stopped
     ports:
-      - "${PHPMYADMIN_PORT:-8089}:80"
+      - "${DOCKER_PHPMYADMIN_PORT:-8089}:80"
     environment:
       PMA_HOST: mysql
       PMA_PORT: 3306
@@ -70,9 +73,13 @@ services:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
+      args:
+        UID: ${DOCKER_UID:-1000}
+        GID: ${DOCKER_GID:-1000}
     container_name: notifications-queue
     restart: unless-stopped
     working_dir: /var/www/html
+    user: www-data
     command: php artisan queue:work --sleep=1 --tries=3 --timeout=60
     volumes:
       - .:/var/www/html
