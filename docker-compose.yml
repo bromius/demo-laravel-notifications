@@ -6,7 +6,7 @@ services:
       args:
         UID: ${DOCKER_UID:-1000}
         GID: ${DOCKER_GID:-1000}
-    container_name: notifications-app
+    container_name: demo-laravel-notifications-app
     restart: unless-stopped
     working_dir: /var/www/html
     volumes:
@@ -16,10 +16,14 @@ services:
         condition: service_healthy
     networks:
       - notifications
+    environment:
+      - GIT_CONFIG_COUNT=1
+      - GIT_CONFIG_KEY_0=safe.directory
+      - GIT_CONFIG_VALUE_0=/var/www/html
 
   nginx:
     image: nginx:1.27-alpine
-    container_name: notifications-nginx
+    container_name: demo-laravel-notifications-nginx
     restart: unless-stopped
     ports:
       - "${DOCKER_APP_PORT:-8088}:80"
@@ -33,7 +37,7 @@ services:
 
   mysql:
     image: mysql:8.4
-    container_name: notifications-mysql
+    container_name: demo-laravel-notifications-mysql
     restart: unless-stopped
     ports:
       - "${DOCKER_DB_PORT:-33061}:3306"
@@ -43,7 +47,7 @@ services:
       MYSQL_PASSWORD: "${DB_PASSWORD:-password}"
       MYSQL_ROOT_PASSWORD: "${DOCKER_DB_ROOT_PASSWORD:-root}"
     volumes:
-      - notifications-mysql:/var/lib/mysql
+      - demo-laravel-notifications-mysql:/var/lib/mysql
     networks:
       - notifications
     healthcheck:
@@ -55,7 +59,7 @@ services:
       
   phpmyadmin:
     image: phpmyadmin:5.2-apache
-    container_name: notifications-phpmyadmin
+    container_name: demo-laravel-notifications-phpmyadmin
     restart: unless-stopped
     ports:
       - "${DOCKER_PHPMYADMIN_PORT:-8089}:80"
@@ -76,7 +80,7 @@ services:
       args:
         UID: ${DOCKER_UID:-1000}
         GID: ${DOCKER_GID:-1000}
-    container_name: notifications-queue
+    container_name: demo-laravel-notifications-queue
     restart: unless-stopped
     working_dir: /var/www/html
     user: www-data
@@ -90,7 +94,7 @@ services:
       - notifications
 
 volumes:
-  notifications-mysql:
+  demo-laravel-notifications-mysql:
 
 networks:
   notifications:
