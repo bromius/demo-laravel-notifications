@@ -18,8 +18,8 @@ REST API service for creating, delivering and reporting user notifications.
 Clone the repository:
 
 ```bash
-git clone <repository-url> notifications
-cd notifications
+git clone https://github.com/bromius/demo-laravel-notifications.git
+cd demo-laravel-notifications
 ```
 
 Copy the environment file:
@@ -64,6 +64,7 @@ id -g
 For production, set:
 
 ```env
+APP_ENV=production
 APP_DEBUG=false
 ```
 
